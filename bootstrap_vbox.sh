@@ -91,7 +91,7 @@ else
 fi
 
 ## Deploy Vault
-bosh  deploy -d vault ${WORKSPACE}/bootstrap-vbox/vault/safe.yml \
+bosh  deploy -d vault ${WORKSPACE}/safe-boshrelease/manifests/safe.yml \
   --non-interactive \
   -o ${VAULTPATCH} \
   --vars-store ${DEPLOYMENTS}/vault-creds.yml \
