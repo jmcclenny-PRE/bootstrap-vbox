@@ -17,22 +17,55 @@ cd ~/workspace
 git clone https://github.com/jmcclenny-epoc/bootstrap-vbox.git
 sudo route add -net 10.244.0.0/16 192.168.50.6 # Mac OS X
 ```
-
+# Without TLS (using system generated self-signed certs or plaintext http communication)
 - First run `./bootstrap_vbox.sh --initial`
 - Subsequent `./bootstrap_vbox.sh`
 
-## Alias your environment
-
-```bash
-bosh alias-env vbox -e 192.168.50.6 --ca-cert <(bosh int ~/deployments/vbox/bosh-creds.yml --path /director_ssl/ca)
-```
-
-## URL's
+## Untrusted URL's
 
 ```bash
 Vault     https://10.244.16.2
 Concourse http://10.244.16.3:8080
 Minio     http://10.244.16.4:9000
+```
+
+# With TLS (using CA signed PKI certs for communication with Transport Layer Security (TLS))
+Provide requisite certificate values and configuration in the following files:
+- bootstrap-vbox/bosh/params/bosh-params.yml
+   * trusted_certs: All of the CA certificates used for the PKI certs being applied to the managed systems
+- bootstrap-vbox/concourse/params/concourse-params.yml
+   * external_url: https://\<CONCOURSE_FQDN\>
+   * concourse_fqdn: CN from the public certificate
+   * ca: CA that signed certificate for concourse web server
+   * certificate: Signed public certificate for concourse web server
+   * private_key: Private key for concourse web server
+- bootstrap-vbox/minio/params/minio-params.yml
+   * minio_ca_cert: CA that signed certificate for minio web server
+   * minio_certificate: Signed public certificate for minio web server
+   * minio_private_key: Private key for minio web server
+- bootstrap-vbox/vault/params/vault-params.yml
+   * vault_ca_cert: CA that signed certificate for vault web server
+   * vault_pki_cert: Signed public certificate for vault web server
+   * vault_pki_key: Private key for vault web server
+
+Execute with the `--tls` flag
+- First run `./bootstrap_vbox.sh --initial --tls`
+- Subsequent `./bootstrap_vbox.sh -tls`
+
+## Trusted URL's
+
+```bash
+Vault     https://10.244.16.2 or https://<VAULT_FQDN>
+Concourse https://10.244.16.3 or https://<CONCOURSE_FQDN>
+Minio     https://10.244.16.4 or https://<MINIO_FQDN>
+```
+
+
+
+## Alias your environment
+
+```bash
+bosh alias-env vbox -e 192.168.50.6 --ca-cert <(bosh int ~/deployments/vbox/bosh-creds.yml --path /director_ssl/ca)
 ```
 
 ## Writing credentials to vault
