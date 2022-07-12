@@ -14,7 +14,7 @@ Requires Virtualbox, which can be downloaded from here: https://www.virtualbox.o
 ```bash
 mkdir workspace
 cd ~/workspace
-git clone https://github.com/jmcclenny-epoc/bootstrap-vbox.git
+git clone https://github.com/jmcclenny-pre/bootstrap-vbox.git
 sudo route add -net 10.244.0.0/16 192.168.50.6 # Mac OS X
 ```
 # Without TLS (using system generated self-signed certs or plaintext http communication)
